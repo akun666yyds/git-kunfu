@@ -102,27 +102,77 @@ java -jar backend/target/gitkunfu-server.jar
 
 ## 用 Git 连接
 
-在网页上新建仓库后，仓库首页会给出克隆地址，格式为：
+服务默认地址是 <http://localhost:8080>，仓库地址格式为：
 
 ```bash
-git clone http://localhost:8080/git/<用户名>/<仓库名>.git
+http://localhost:8080/git/<用户名>/<仓库名>.git
 ```
 
-推送时 Git 会要求输入账号密码，填注册时的用户名和密码即可。注意：
-
-- 只有仓库所有者可以 `push`，其他人可以 `clone` 公开仓库。
-- 私有仓库必须登录后才能访问，未登录会返回 401。
-- 推送完成后，提交记录、分支、仓库统计会同步刷新，不需要额外操作。
-
-一个完整的小例子：
+仓库首页右上角会显示当前仓库的实际克隆地址，点「复制」即可。本项目的源码地址：
 
 ```bash
-git clone http://localhost:8080/git/akun/kunfu-demo.git
-cd kunfu-demo
-echo "hello" > hello.txt
-git add hello.txt
-git commit -m "add hello"
+# 功夫吉特（本机）
+http://localhost:8080/git/akun/git-kunfu.git
+
+# GitHub（镜像）
+https://github.com/akun666yyds/git-kunfu.git
+```
+
+### 克隆与推送
+
+从功夫吉特克隆，并把 GitHub 添加为第二个远程：
+
+```bash
+git clone http://localhost:8080/git/akun/git-kunfu.git
+cd git-kunfu
+git remote add github https://github.com/akun666yyds/git-kunfu.git
+
+# 修改代码后
+git add .
+git commit -m "说明这次改动"
 git push origin main
+git push github main
+```
+
+从 GitHub 克隆时反过来添加本机远程：
+
+```bash
+git clone https://github.com/akun666yyds/git-kunfu.git
+cd git-kunfu
+git remote add gitkunfu http://localhost:8080/git/akun/git-kunfu.git
+git push gitkunfu main
+```
+
+推送功夫吉特时输入本站的账号密码，推送 GitHub 时使用 GitHub 的凭据。只有仓库所有者可以推送，公开仓库任何人都能克隆；私有仓库必须登录后才能访问，未登录会返回 401。
+
+### 新建仓库后的初始化
+
+新建仓库时如果没有勾选初始化 README，仓库首页会给出三套可直接复制的命令，把 `<用户名>`、`<仓库名>` 换成实际值即可。
+
+本地新建仓库：
+
+```bash
+git init
+git add .
+git commit -m "第一次提交"
+git branch -M main
+git remote add origin http://localhost:8080/git/<用户名>/<仓库名>.git
+git push -u origin main
+```
+
+推送已有的本地仓库：
+
+```bash
+cd 你的项目目录
+git remote add origin http://localhost:8080/git/<用户名>/<仓库名>.git
+git branch -M main
+git push -u origin main
+```
+
+如果项目里已经有 `origin`，把第二行换成：
+
+```bash
+git remote set-url origin http://localhost:8080/git/<用户名>/<仓库名>.git
 ```
 
 ### 从其他平台迁移
@@ -130,13 +180,22 @@ git push origin main
 已有的 GitHub、Gitee 等仓库可以连同分支和标签整体搬过来：
 
 ```bash
-git clone --mirror https://github.com/用户名/仓库.git
-cd 仓库.git
-git remote set-url origin http://localhost:8080/git/akun/新仓库.git
+git clone --mirror https://github.com/<账号>/<仓库>.git
+cd <仓库>.git
+git remote set-url origin http://localhost:8080/git/<用户名>/<仓库>.git
 git push --mirror
 ```
 
-`--mirror` 会同步全部分支、标签与引用。源仓库需要登录时，克隆阶段按提示输入原平台凭据；迁移完成后本地的裸仓库可以直接删除。仓库页的初始化引导里也能直接复制这套命令。
+例如把 GitHub 上的 `highschool-runtime` 迁到本机主账号：
+
+```bash
+git clone --mirror https://github.com/akun666yyds/highschool-runtime.git
+cd highschool-runtime.git
+git remote set-url origin http://localhost:8080/git/akun/highschool-runtime.git
+git push --mirror
+```
+
+镜像会同步全部分支、标签与引用。源仓库需要登录时，克隆阶段按提示输入原平台凭据；迁移完成后本地的裸仓库可以直接删除。仓库页的初始化引导里也能直接复制这套命令。
 
 ## 数据与备份
 
