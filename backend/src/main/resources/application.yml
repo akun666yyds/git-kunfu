@@ -1,0 +1,37 @@
+server:
+  address: 127.0.0.1
+  port: 8080
+  compression:
+    enabled: true
+    mime-types: text/html,text/css,application/javascript,application/json
+
+spring:
+  application:
+    name: gitkunfu
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/gitkunfu?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&useSSL=false
+    username: ${GITKUNFU_DB_USER:gitkunfu}
+    password: ${GITKUNFU_DB_PASSWORD:gitkunfu_2026}
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 1
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:schema.sql
+      continue-on-error: false
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+
+gitkunfu:
+  repository-root: ./data/repositories
+  base-url: http://localhost:8080
+  jwt-secret: ${GITKUNFU_JWT_SECRET:dev-only-change-me-before-deploying-7f3c1a9e5b2d8064c4a1f0e9d8b7a6c5}
+  jwt-ttl-hours: 168
+  app-name: 功夫吉特
+
+logging:
+  level:
+    com.gitkunfu: INFO
+    org.eclipse.jgit: WARN
